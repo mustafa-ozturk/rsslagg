@@ -6,6 +6,7 @@ import (
 	"context"
 	"time"
 	"strings"
+	"sort"
 
 	"github.com/mustafa-ozturk/rsslagg/internal/config"
 )
@@ -61,7 +62,13 @@ func main() {
 		}
 	}
 
+	// sort items
+	sort.Slice(rssItems, func(i, j int) bool {
+		return rssItems[i].PubDate.Before(rssItems[j].PubDate)
+	})
 
+
+	// printing items
 	for _, item := range rssItems {
 		pubDateStr := fmt.Sprintf("%04d-%02d-%02d",
 			item.PubDate.Year(),
