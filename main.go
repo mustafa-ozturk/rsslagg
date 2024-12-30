@@ -3,7 +3,6 @@ package main
 import (
 	"fmt"
 	"log"
-	"context"
 	"time"
 	"strings"
 	"sort"
@@ -18,12 +17,6 @@ func extractTimeFromPubDate(originalPubDate string) (time.Time, error) {
 	return pubDate, err
 }
 
-type RSSItemWithChannelTitle struct {
-	ChannelTitle	string	
-	ItemTitle		string	
-	Link			string
-	PubDate			time.Time
-}
 
 func main() {
 	cfg, err := config.Read()
@@ -31,35 +24,17 @@ func main() {
 		log.Fatalf("error reading config: %v", err)
 	}
 
-	rssItems := []RSSItemWithChannelTitle{}
+	rssItems, err := GetRssItems(cfg.RSSFeedLinks)
 	
-	for _, link := range cfg.RSSFeedLinks {
-		feed, err := fetchFeed(context.Background(), link)
-		if err != nil {
-			log.Fatalf("couldn't fetch feed: %v", err)
-			return
-		}
+	// sortRssItemsByDate
+	// printRssItems
 
-		for _, item := range feed.Channel.Item {
-			pubDate, err := extractTimeFromPubDate(item.PubDate)
-			if err != nil {
-				log.Fatalf("$$ couldn't parse date: %v", err)
-				return
-			}
-
-			rssItems = append(rssItems, RSSItemWithChannelTitle{
-				ChannelTitle: feed.Channel.Title,
-				ItemTitle: item.Title,
-				Link:	item.Link,
-				PubDate: pubDate,
-			})
-		}
-	}
-
+	// sort items by date
 	sort.Slice(rssItems, func(i, j int) bool {
 		return rssItems[i].PubDate.Before(rssItems[j].PubDate)
 	})
 
+	// print items
 	for _, item := range rssItems[len(rssItems) - cfg.MaxPostsDisplayed:] {
 		pubDateStr := fmt.Sprintf("%04d-%02d-%02d",
 			item.PubDate.Year(),

@@ -25,6 +25,13 @@ type RSSItem struct {
 	PubDate		string	`xml:"pubDate"`
 }
 
+type RSSItemWithChannelTitle struct {
+	ChannelTitle	string	
+	ItemTitle		string	
+	Link			string
+	PubDate			time.Time
+}
+
 func fetchFeed(ctx context.Context, feedURL string) (*RSSFeed, error) {
 	httpClient := http.Client{
 		Timeout: 10 * time.Second,
@@ -61,4 +68,31 @@ func fetchFeed(ctx context.Context, feedURL string) (*RSSFeed, error) {
 	}
 
 	return &rssFeed, nil
+}
+
+
+func GetRssItems(feedLinks []string) ([]RSSItemWithChannelTitle, error) {
+	rssItems := []RSSItemWithChannelTitle{}
+	for _, link := range feedLinks {
+		feed, err := fetchFeed(context.Background(), link)
+		if err != nil {
+			return []RSSItemWithChannelTitle{}, err
+		}
+
+		for _, item := range feed.Channel.Item {
+			pubDate, err := extractTimeFromPubDate(item.PubDate)
+			if err != nil {
+				return []RSSItemWithChannelTitle{}, err
+			}
+
+			rssItems = append(rssItems, RSSItemWithChannelTitle{
+				ChannelTitle: feed.Channel.Title,
+				ItemTitle: item.Title,
+				Link:	item.Link,
+				PubDate: pubDate,
+			})
+		}
+	}
+
+	return rssItems, nil
 }
