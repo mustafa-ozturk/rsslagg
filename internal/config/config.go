@@ -10,7 +10,7 @@ const configFileName = ".rsslaggconfig.json"
 
 type Config struct {
 	MaxPostsDisplayed	int			`json:"max_posts_displayed"`
-	RSSFeeds			[]string	`json:"rss_feeds"`
+	RSSFeedLinks		[]string	`json:"rss_feed_links"`
 }
 func Read() (Config, error) {
 	fullPath, err := getConfigFilePath()	
