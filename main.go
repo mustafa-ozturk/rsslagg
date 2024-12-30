@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"log"
 	"context"
+	"time"
+	"strings"
 
 	"github.com/mustafa-ozturk/rsslagg/internal/config"
 )
@@ -25,16 +27,31 @@ func main() {
 	for _, link := range cfg.RSSFeedLinks {
 		feed, err := fetchFeed(context.Background(), link)
 		if err != nil {
-			log.Fatalf("couldn't fetch feed: %w", err)
+			log.Fatalf("couldn't fetch feed: %v", err)
 			return
 		}
+
 		rssFeeds = append(rssFeeds, *feed)
 	}
 
 
 	for _, feed := range rssFeeds {
 		for _, item := range feed.Channel.Item {
-			fmt.Printf("%s | %s | %s | %s\n", item.PubDate,
+			splitDate := strings.Split(item.PubDate, " ")
+			joinedDate := strings.Join(splitDate[:len(splitDate) - 2], " ")
+			pubDate, err := time.Parse("Mon, 02 Jan 2006", joinedDate)
+			if err != nil {
+				log.Fatalf("couldn't parse date: %v", err)
+				return
+			}
+
+			pubDateStr := fmt.Sprintf("%04d-%02d-%02d",
+				pubDate.Year(),
+				int(pubDate.Month()),
+				pubDate.Day())
+
+			fmt.Printf("- %s | %s | %s:\n\t%s\n\n",
+				pubDateStr,
 				feed.Channel.Title,
 				item.Title,
 				item.Link) 
