@@ -26,16 +26,10 @@ type RSSItemWithChannelTitle struct {
 }
 
 func main() {
-	// 1. get feeds from config file
 	cfg, err := config.Read()
 	if err != nil {
 		log.Fatalf("error reading config: %v", err)
 	}
-
-	fmt.Println("config:max_posts_displayed:", cfg.MaxPostsDisplayed)
-	fmt.Println("config:rss_feed_links[0]:", cfg.RSSFeedLinks[0])
-	fmt.Println("config:rss_feed_links[1]:", cfg.RSSFeedLinks[1])
-	fmt.Println("config:rss_feed_links[2]:", cfg.RSSFeedLinks[2])
 
 	rssItems := []RSSItemWithChannelTitle{}
 	
@@ -62,14 +56,11 @@ func main() {
 		}
 	}
 
-	// sort items
 	sort.Slice(rssItems, func(i, j int) bool {
 		return rssItems[i].PubDate.Before(rssItems[j].PubDate)
 	})
 
-
-	// printing items
-	for _, item := range rssItems {
+	for _, item := range rssItems[len(rssItems) - cfg.MaxPostsDisplayed:] {
 		pubDateStr := fmt.Sprintf("%04d-%02d-%02d",
 			item.PubDate.Year(),
 			int(item.PubDate.Month()),
@@ -81,7 +72,4 @@ func main() {
 			item.ItemTitle,
 			item.Link) 
 	}
-
-
-	// 4. display latest max posts, default to 10 and ovewrite if -m flag present
 }
