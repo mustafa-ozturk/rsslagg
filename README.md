@@ -11,7 +11,7 @@ Make sure you have the latest [Go toolchain](https://golang.org/dl/) installed.
 You can then install `rsslagg` with:
 
 ```bash
-go install github.com/mustafa-ozturk/rsslagg
+go install https://github.com/mustafa-ozturk/rsslagg
 ```
 
 ## Config
