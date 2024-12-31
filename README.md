@@ -33,7 +33,7 @@ Create a `.rsslaggconfig.json` file in your home directory with the following st
 
 Running `rsslagg` will print you the latest `max_posts_displayed` posts:
 
-```bash
+```txt
 rsslagg
 
 - 2024-12-14 | Boot.dev Blog | Functions in Python:
