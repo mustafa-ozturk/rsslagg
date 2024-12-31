@@ -7,6 +7,7 @@ import (
 	"io"
 	"encoding/xml"
 	"html"
+	"sort"
 )
 
 type RSSFeed struct {
@@ -96,3 +97,12 @@ func GetRssItems(feedLinks []string) ([]RSSItemWithChannelTitle, error) {
 
 	return rssItems, nil
 }
+
+func SortRSSItemsByDate(rssItems []RSSItemWithChannelTitle) []RSSItemWithChannelTitle {
+	sort.Slice(rssItems, func(i, j int) bool {
+		return rssItems[i].PubDate.Before(rssItems[j].PubDate)
+	})
+	return rssItems
+}
+
+

@@ -5,7 +5,6 @@ import (
 	"log"
 	"time"
 	"strings"
-	"sort"
 
 	"github.com/mustafa-ozturk/rsslagg/internal/config"
 )
@@ -25,14 +24,9 @@ func main() {
 	}
 
 	rssItems, err := GetRssItems(cfg.RSSFeedLinks)
+	rssItems = SortRSSItemsByDate(rssItems)
 	
-	// sortRssItemsByDate
 	// printRssItems
-
-	// sort items by date
-	sort.Slice(rssItems, func(i, j int) bool {
-		return rssItems[i].PubDate.Before(rssItems[j].PubDate)
-	})
 
 	// print items
 	for _, item := range rssItems[len(rssItems) - cfg.MaxPostsDisplayed:] {
