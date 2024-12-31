@@ -9,6 +9,7 @@ import (
 	"html"
 	"sort"
 	"fmt"
+	"strings"
 )
 
 type RSSFeed struct {
@@ -119,4 +120,11 @@ func PrintRSSItems(rssItems []RSSItemWithChannelTitle, maxPostsDisplayed int) {
 			item.ItemTitle,
 			item.Link) 
 	}
+}
+
+func extractTimeFromPubDate(originalPubDate string) (time.Time, error) {
+	splitDate := strings.Split(originalPubDate, " ")
+	joinedDate := strings.Join(splitDate[:len(splitDate) - 2], " ")
+	pubDate, err := time.Parse("Mon, 02 Jan 2006", joinedDate)
+	return pubDate, err
 }
