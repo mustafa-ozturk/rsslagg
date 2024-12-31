@@ -8,6 +8,7 @@ import (
 	"encoding/xml"
 	"html"
 	"sort"
+	"fmt"
 )
 
 type RSSFeed struct {
@@ -72,7 +73,7 @@ func fetchFeed(ctx context.Context, feedURL string) (*RSSFeed, error) {
 }
 
 
-func GetRssItems(feedLinks []string) ([]RSSItemWithChannelTitle, error) {
+func GetRSSItems(feedLinks []string) ([]RSSItemWithChannelTitle, error) {
 	rssItems := []RSSItemWithChannelTitle{}
 	for _, link := range feedLinks {
 		feed, err := fetchFeed(context.Background(), link)
@@ -105,4 +106,17 @@ func SortRSSItemsByDate(rssItems []RSSItemWithChannelTitle) []RSSItemWithChannel
 	return rssItems
 }
 
+func PrintRSSItems(rssItems []RSSItemWithChannelTitle, maxPostsDisplayed int) {
+	for _, item := range rssItems[len(rssItems) - maxPostsDisplayed:] {
+		pubDateStr := fmt.Sprintf("%04d-%02d-%02d",
+			item.PubDate.Year(),
+			int(item.PubDate.Month()),
+			item.PubDate.Day())
 
+		fmt.Printf("- %s | %s | %s:\n\t%s\n\n",
+			pubDateStr,
+			item.ChannelTitle,
+			item.ItemTitle,
+			item.Link) 
+	}
+}

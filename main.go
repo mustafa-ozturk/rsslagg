@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"log"
 	"time"
 	"strings"
@@ -23,22 +22,10 @@ func main() {
 		log.Fatalf("error reading config: %v", err)
 	}
 
-	rssItems, err := GetRssItems(cfg.RSSFeedLinks)
-	rssItems = SortRSSItemsByDate(rssItems)
-	
-	// printRssItems
-
-	// print items
-	for _, item := range rssItems[len(rssItems) - cfg.MaxPostsDisplayed:] {
-		pubDateStr := fmt.Sprintf("%04d-%02d-%02d",
-			item.PubDate.Year(),
-			int(item.PubDate.Month()),
-			item.PubDate.Day())
-
-		fmt.Printf("- %s | %s | %s:\n\t%s\n\n",
-			pubDateStr,
-			item.ChannelTitle,
-			item.ItemTitle,
-			item.Link) 
+	rssItems, err := GetRSSItems(cfg.RSSFeedLinks)
+	if err != nil {
+		log.Fatalf("error getting RSS Items: %v", err)
 	}
+	rssItems = SortRSSItemsByDate(rssItems)
+	PrintRSSItems(rssItems, cfg.MaxPostsDisplayed)
 }
