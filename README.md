@@ -1,8 +1,7 @@
 # rsslagg
 
-A command-line RSS link aggregator that displays the latest post links
-from RSS feeds you follow.
-
+A command-line RSS aggregator that fetches and displays the latest post 
+links from the feeds you follow.
 
 ## Installation
 
